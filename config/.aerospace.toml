@@ -1,0 +1,106 @@
+start-at-login = true
+default-root-container-layout = 'tiles'
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Gaps settings
+[gaps]
+inner.horizontal = 15
+inner.vertical   = 15
+outer.left       = 15
+outer.bottom     = 15
+outer.top        = 3
+outer.right      = 15
+
+# Utility key binding
+[mode.main.binding]
+shift-alt-f = 'fullscreen'
+shift-alt-r = 'reload-config'
+shift-alt-space = 'layout floating tiling'
+shift-alt-e = 'balance-sizes'
+
+# Navigation settings and keymap
+cmd-alt-left = 'focus left'
+cmd-alt-right = 'focus right'
+
+shift-alt-left = 'resize smart +50'
+shift-alt-right = 'resize smart -50'
+shift-alt-up = 'resize smart -50'
+shift-alt-down = 'resize smart +50'
+
+# Workspace settings & Navigation
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+
+# Personal Chatting Apps (Workspace 1 - No Auto Fullscreen)
+[[on-window-detected]]
+if.app-id = 'com.tinyapp.WhatsApp'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'ru.keepcoder.Telegram'
+run = 'move-node-to-workspace 1'
+
+# Browser (Workspace 1)
+[[on-window-detected]]
+if.app-id = 'com.vivaldi.Vivaldi'
+run = ['move-node-to-workspace 2', 'fullscreen']
+
+# Slack (Workspace 5)
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = ['move-node-to-workspace 5', 'fullscreen']
+
+# Work & Dev Tools (Workspace 3, 4, 6)
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = ['move-node-to-workspace 3', 'fullscreen']
+
+[[on-window-detected]]
+if.app-id = 'com.googlecode.iterm2'
+run = ['move-node-to-workspace 4', 'fullscreen']
+
+[[on-window-detected]]
+if.app-id = 'com.cron.electron'
+run = ['move-node-to-workspace 6']
+
+[[on-window-detected]]
+if.app-id = 'notion.id'
+run = ['move-node-to-workspace 6']
+
+[[on-window-detected]]
+if.app-id = 'notion.mail.id'
+run = ['move-node-to-workspace 6']
+
+# Database & Productivity (Workspace 6)
+[[on-window-detected]]
+if.app-id = 'org.jkiss.dbeaver.core.product'
+run = ['move-node-to-workspace 7', 'fullscreen']
+
+[[on-window-detected]]
+if.app-id = 'org.pgadmin.pgadmin4'
+run = ['move-node-to-workspace 7', 'fullscreen']
+
+[[on-window-detected]]
+if.app-id = 'com.elasticvue.app'
+run = ['move-node-to-workspace 7', 'fullscreen']
+
+# Spotify
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = ['move-node-to-workspace 8', 'fullscreen']
