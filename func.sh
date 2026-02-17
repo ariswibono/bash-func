@@ -83,7 +83,7 @@ alias gstsh="git stash show"
 alias gbd="git branch -D"
 alias gcp="git cherry-pick"
 alias gcpm1="git cherry-pick -m 1"
-alias glg="git log"
+alias glg="git log --reverse"
 alias gm="git merge"
 
 function git-cleanup() { git branch | grep -v "main" | grep -v "master" | xargs git branch -D; }
