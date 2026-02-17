@@ -30,3 +30,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Installation complete! Helper functions added to $RC_FILE"
 echo "Please restart your shell or run: source $RC_FILE"
+
+# Install aerospace.toml
+cp -R config/.aerospace.toml ~/.aerospace.toml
