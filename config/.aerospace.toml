@@ -1,7 +1,7 @@
 start-at-login = true
 default-root-container-layout = 'tiles'
 enable-normalization-flatten-containers = false
-enable-normalization-opposite-orientation-for-nested-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = false
 
 # Gaps settings
 [gaps]
@@ -69,7 +69,7 @@ run = ['move-node-to-workspace 5', 'fullscreen']
 # Work & Dev Tools (Workspace 3, 4, 6)
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
-run = ['move-node-to-workspace 3', 'fullscreen']
+run = ['layout floating', 'move-node-to-workspace 3']
 
 [[on-window-detected]]
 if.app-id = 'com.googlecode.iterm2'
