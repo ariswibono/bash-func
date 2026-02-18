@@ -90,17 +90,17 @@ run = ['move-node-to-workspace 6']
 # Database & Productivity (Workspace 6)
 [[on-window-detected]]
 if.app-id = 'org.jkiss.dbeaver.core.product'
-run = ['move-node-to-workspace 7', 'fullscreen']
+run = ['move-node-to-workspace 7', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'org.pgadmin.pgadmin4'
-run = ['move-node-to-workspace 7', 'fullscreen']
+run = ['move-node-to-workspace 7', 'layout floating']
 
 [[on-window-detected]]
 if.app-id = 'com.elasticvue.app'
-run = ['move-node-to-workspace 7', 'fullscreen']
+run = ['move-node-to-workspace 7', 'layout floating']
 
 # Spotify
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
-run = ['move-node-to-workspace 8', 'fullscreen']
+run = ['move-node-to-workspace 8', 'layout floating']
