@@ -99,6 +99,16 @@ alias to="terraform output"
 alias configedit='$GLOBAL_EDITOR ~/.zshrc'
 alias configssh='$GLOBAL_EDITOR ~/.ssh/config'
 
+# Obsidian Vault
+alias obsidianVaultRepository='cd ~/Workspaces/mataberat/obsidian-vault/'
+
+function obsidianVaultAutoCommit() {
+    obsidianVaultRepository && \
+    git add . && \
+    git commit -m "New update - $(date)" && \
+    git push origin main
+}
+
 # Common helper functions
 function ssh-purge-known-host {
     if [ -z "$1" ]; then
