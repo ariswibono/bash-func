@@ -23,7 +23,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Add source commands to RC file with grouped redirects
 {
     echo ""
-    echo "# Kubernetes helper functions"
+    echo "# Mataberat Bash functions, aliases, and helpers script"
     echo "[ -f $SCRIPT_DIR/func.sh ] && source $SCRIPT_DIR/func.sh"
     echo "[ -f $SCRIPT_DIR/config.sh ] && source $SCRIPT_DIR/config.sh"
 } >>"$RC_FILE"
@@ -33,3 +33,4 @@ echo "Please restart your shell or run: source $RC_FILE"
 
 # Install aerospace.toml
 cp -R config/.aerospace.toml ~/.aerospace.toml
+aerospace reload-config
