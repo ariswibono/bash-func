@@ -1,4 +1,47 @@
 #!/bin/bash
+# Aliases
+alias docker-cleanup="docker system prune -a -f"
+alias awscli-cleanup="unset AWS_ACCESS_KEY_ID && unset AWS_SECRET_ACCESS_KEY && unset AWS_DEFAULT_REGION && unset AWS_REGION && unset AWS_PROFILE && unset AWS_SESSION_TOKEN"
+
+# Git aliases
+alias g="git"
+alias ga="git add"
+alias gs="git status"
+alias gco="git checkout"
+alias gcm="git commit -m"
+alias gd="git diff"
+alias gf="git fetch"
+alias gp="git pull"
+alias gplr="git pull --rebase"
+alias gplo="git pull origin"
+alias gps="git push"
+alias gpo="git push origin"
+alias gst="git stash"
+alias gstp="git stash pop"
+alias gstl="git stash list"
+alias gstc="git stash clear"
+alias gstsh="git stash show"
+alias gbd="git branch -D"
+alias gcp="git cherry-pick"
+alias gcpm1="git cherry-pick -m 1"
+alias glg="git log --reverse"
+alias gm="git merge"
+
+function git-cleanup() { git branch | grep -v "main" | grep -v "master" | xargs git branch -D; }
+# Terraform aliases
+alias t="terraform"
+alias ti="terraform init"
+alias tp="terraform plan"
+alias ta="terraform apply"
+alias td="terraform destroy"
+alias to="terraform output"
+
+# Configuration aliases
+alias configedit='$GLOBAL_EDITOR ~/.zshrc'
+alias configssh='$GLOBAL_EDITOR ~/.ssh/config'
+
+# Obsidian Vault
+alias obsidianVaultRepository='cd ~/Workspaces/mataberat/obsidian-vault/'
 
 # Common bash helper functions
 function c() { clear; }
@@ -9,7 +52,7 @@ function k() { kubectl "$@"; }
 function kc() { kubectx "$@"; }
 function kn() { kubens "$@"; }
 
-function dotenv-compare() {
+function dotEnvCompareFiles() {
     if [ "$#" -eq 0 ]; then
         echo "Compares two .env files and shows which environment variables are missing in each file"
         echo ""
@@ -58,50 +101,6 @@ function dotenv-compare() {
     echo "$missing_in_file_1"
 }
 
-# Clean-up aliases
-alias docker-cleanup="docker system prune -a -f"
-alias awscli-cleanup="unset AWS_ACCESS_KEY_ID && unset AWS_SECRET_ACCESS_KEY && unset AWS_DEFAULT_REGION && unset AWS_REGION && unset AWS_PROFILE && unset AWS_SESSION_TOKEN"
-
-# Git aliases
-alias g="git"
-alias ga="git add"
-alias gs="git status"
-alias gco="git checkout"
-alias gcm="git commit -m"
-alias gd="git diff"
-alias gf="git fetch"
-alias gp="git pull"
-alias gplr="git pull --rebase"
-alias gplo="git pull origin"
-alias gps="git push"
-alias gpo="git push origin"
-alias gst="git stash"
-alias gstp="git stash pop"
-alias gstl="git stash list"
-alias gstc="git stash clear"
-alias gstsh="git stash show"
-alias gbd="git branch -D"
-alias gcp="git cherry-pick"
-alias gcpm1="git cherry-pick -m 1"
-alias glg="git log --reverse"
-alias gm="git merge"
-
-function git-cleanup() { git branch | grep -v "main" | grep -v "master" | xargs git branch -D; }
-# Terraform aliases
-alias t="terraform"
-alias ti="terraform init"
-alias tp="terraform plan"
-alias ta="terraform apply"
-alias td="terraform destroy"
-alias to="terraform output"
-
-# Configuration aliases
-alias configedit='$GLOBAL_EDITOR ~/.zshrc'
-alias configssh='$GLOBAL_EDITOR ~/.ssh/config'
-
-# Obsidian Vault
-alias obsidianVaultRepository='cd ~/Workspaces/mataberat/obsidian-vault/'
-
 function obsidianVaultAutoCommit() {
     obsidianVaultRepository && \
     git add . && \
@@ -122,7 +121,7 @@ function ssh-purge-known-host {
 
 # Kubernetes helper functions
 
-function k8s-delete-terminating-namespace() {
+function kubeDeleteTerminatingNamespace() {
     local context namespace
     context=$(kubectl config current-context)
     namespace=$1
@@ -159,7 +158,7 @@ function k8s-delete-terminating-namespace() {
     fi
 }
 
-function k8s-run-alpine-pod() {
+function kubeRunAlpinePod() {
     local namespace="${1#namespace=}"
     if [ -z "$namespace" ]; then
         namespace="default"
@@ -171,7 +170,7 @@ function k8s-run-alpine-pod() {
     kubectl -n "$namespace" delete pod alpine-shell --grace-period=0 --force || true
 }
 
-function k8s-force-delete-pod() {
+function kubeForceDeletePod() {
     local namespace="${1#namespace=}"
     local pod="${2#pod=}"
 
@@ -184,12 +183,12 @@ function k8s-force-delete-pod() {
     kubectl delete pod "$pod" -n "$namespace" --grace-period=0 --force
 }
 
-function k8s-get-secrets() {
+function kubeGetSecrets() {
     local namespace="${1#namespace=}"
     local secret="${2#secret=}"
     kubectl -n "$namespace" get secret "$secret" -o jsonpath="{.data}" | jq 'map_values(@base64d)'
 }
 
-function k8s-get-all-restarted() {
+function kubeGetAllRestartedPods() {
     kubectl get pods --all-namespaces | awk '$5 > 0'
 }
