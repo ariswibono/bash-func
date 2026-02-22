@@ -23,10 +23,15 @@ shift-alt-e = 'balance-sizes'
 cmd-alt-left = 'focus left'
 cmd-alt-right = 'focus right'
 
-shift-alt-left = 'resize smart +50'
-shift-alt-right = 'resize smart -50'
+shift-alt-left = 'resize smart -50'
+shift-alt-right = 'resize smart +50'
 shift-alt-up = 'resize smart -50'
 shift-alt-down = 'resize smart +50'
+
+ctrl-alt-left = 'move left'
+ctrl-alt-right = 'move right'
+ctrl-alt-up = 'move up'
+ctrl-alt-down = 'move down'
 
 # Workspace settings & Navigation
 alt-1 = 'workspace 1'
@@ -59,7 +64,7 @@ run = 'move-node-to-workspace 1'
 # Browser (Workspace 1)
 [[on-window-detected]]
 if.app-id = 'com.vivaldi.Vivaldi'
-run = ['move-node-to-workspace 2', 'fullscreen']
+run = ['move-node-to-workspace 2']
 
 # Slack (Workspace 5)
 [[on-window-detected]]
