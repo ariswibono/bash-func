@@ -104,3 +104,8 @@ run = ['move-node-to-workspace 7', 'layout floating']
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = ['move-node-to-workspace 8', 'layout floating']
+
+# Obsidian
+[[on-window-detected]]
+if.app-id = 'md.obsidian'
+run = ['move-node-to-workspace 2', 'fullscreen']
