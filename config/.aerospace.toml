@@ -9,7 +9,7 @@ inner.horizontal = 15
 inner.vertical   = 15
 outer.left       = 15
 outer.bottom     = 15
-outer.top        = 3
+outer.top        = 5
 outer.right      = 15
 
 # Utility key binding
