@@ -4,7 +4,9 @@ alias docker-cleanup="docker system prune -a -f"
 alias awscli-cleanup="unset AWS_ACCESS_KEY_ID && unset AWS_SECRET_ACCESS_KEY && unset AWS_DEFAULT_REGION && unset AWS_REGION && unset AWS_PROFILE && unset AWS_SESSION_TOKEN"
 
 # SMC Logic
-alias btc-smc="PAIR=BTCUSDT; smc-logic $PAIR 1D,4h,15m,5m > ~/Downloads/$PAIR-$(date +%Y%m%d-%H%M%S).md"
+function btcSmc() {
+    PAIR=BTCUSDT; smc-logic $PAIR 1D,4h,15m,5m > ~/Downloads/$PAIR-$(date +%Y%m%d-%H%M%S).md
+}
 
 # Git aliases
 alias g="git"
