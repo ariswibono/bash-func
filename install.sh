@@ -35,9 +35,9 @@ else
 fi
 
 # Install aerospace.toml only on macOS
-if [[ "$(uname)" == "Darwin" ]]; then
-    cp -R config/.aerospace.toml ~/.aerospace.toml
-    aerospace reload-config
-else
-    echo "Skipping aerospace configuration: not running on macOS (detected $(uname))."
-fi
+# if [[ "$(uname)" == "Darwin" ]]; then
+#     cp -R config/.aerospace.toml ~/.aerospace.toml
+#     aerospace reload-config
+# else
+#     echo "Skipping aerospace configuration: not running on macOS (detected $(uname))."
+# fi
