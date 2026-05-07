@@ -5,6 +5,7 @@ alias awscli-cleanup="unset AWS_ACCESS_KEY_ID && unset AWS_SECRET_ACCESS_KEY && 
 
 # SMC Logic
 function btcSmc() {
+    rm ~/Downloads/BTCUSDT-* && \
     PAIR=BTCUSDT; smc-logic $PAIR 1D,4h,15m,5m > ~/Downloads/$PAIR-$(date +%Y%m%d-%H%M%S).md
 }
 
