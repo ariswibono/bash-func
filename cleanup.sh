@@ -1,100 +1,108 @@
 #!/usr/bin/env bash
 
-# --- BATTLE-HARDENED HEADER ---
-# -e: exit on error | -u: exit on unset variables | -o pipefail: catch pipe errors
+# --- PRODUCTION HEADER ---
 set -euo pipefail
 
-# --- CONFIGURATION ---
+# --- CONFIG ---
 TARGET_DIR="${TARGET_DIR:-$HOME/Workspaces}"
 APPLY=false
 LOG_FILE="/tmp/workspace_cleanup_$(date +%Y%m%d).log"
 
-# Professional Color Palette
+# UI Colors
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# --- LOGGING & SAFETY ---
-log_info()  { printf "${BLUE}[INFO]${NC} %s\n" "$1"; }
-log_ok()    { printf "${GREEN}[OK]${NC} %s\n" "$1"; }
-log_warn()  { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
-log_error() { printf "${RED}[ERROR]${NC} %s\n" "$1" >&2; }
+msg() { printf "${BLUE}==>${NC} %s\n" "$1"; }
+warn() { printf "${YELLOW}wait:${NC} %s\n" "$1"; }
+err() { printf "${RED}err:${NC} %s\n" "$1" >&2; }
 
-# Trap signals (like Ctrl+C) to exit cleanly
+# Initialize Log
+echo "--- Cleanup Log $(date) ---" > "$LOG_FILE"
+
+# --- SIGNALS & PRIVILEGES ---
 cleanup_exit() {
     local exit_code=$?
-    [[ $exit_code -ne 0 ]] && log_error "Script interrupted or failed."
+    [[ -n "${SUDO_PID:-}" ]] && kill "$SUDO_PID" 2>/dev/null || true
+    if [[ $exit_code -ne 0 ]]; then
+        err "Process interrupted. Audit log: $LOG_FILE"
+    fi
     exit "$exit_code"
 }
 trap cleanup_exit EXIT SIGINT SIGTERM
 
-# --- TARGET DEFINITIONS ---
-PRUNE_DIRS=(
-    ".terraform" "node_modules" ".yarn" ".pnpm-store" ".venv" "venv" 
-    "__pycache__" ".pytest_cache" "dist" "build" "target" ".next" ".turbo"
-)
-PRUNE_FILES=(".DS_Store" "*.pyc" "*.pyo")
+# Check for the --apply flag
+for arg in "$@"; do [[ "$arg" == "--apply" ]] && APPLY=true; done
 
-# --- CORE LOGIC ---
-delete_safely() {
-    local path="$1"
-    if $APPLY; then
-        # Handle read-only files (common in Go modules)
-        if ! rm -rf -- "$path" 2>/dev/null; then
-            chmod -R +w "$path" 2>/dev/null || true
-            rm -rf -- "$path" || log_warn "Skipped: $path (Permission Denied)"
-        fi
-    else
-        printf "  ${YELLOW}DRY-RUN:${NC} %s\n" "$path"
-    fi
-}
-
-get_size_gb() {
-    local kb
-    kb=$(du -sk "$1" 2>/dev/null | awk '{print $1}')
-    echo "scale=2; ${kb:-0} / 1048576" | bc
-}
-
-# --- MAIN EXECUTION ---
-clear
-printf "${BLUE}=============================================${NC}\n"
-printf "   🚀 BATTLE-HARDENED WORKSPACE CLEANER      \n"
-printf "${BLUE}=============================================${NC}\n"
-
-# Verify Target Directory safely
-if [[ ! -d "$TARGET_DIR" ]]; then
-    log_error "Directory $TARGET_DIR does not exist."
-    exit 1
+if $APPLY; then
+    warn "DELETION MODE ACTIVE. Authenticating sudo..."
+    sudo -v
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    SUDO_PID=$!
+else
+    msg "DRY-RUN MODE. No files will be deleted."
 fi
 
-log_info "Target: $TARGET_DIR"
-[[ "$APPLY" == "true" ]] && log_warn "MODE: DELETION ACTIVE" || log_info "MODE: PREVIEW ONLY"
+# --- SCANNING DEFINITIONS ---
+PRUNE_DIRS=(".terraform" "node_modules" ".yarn" ".pnpm-store" ".venv" "venv" "__pycache__" ".pytest_cache" "dist" "build" "target" ".next" ".turbo")
+PRUNE_FILES=(".DS_Store" "*.pyc" "*.pyo" ".coverage")
 
-# Build Single-Pass Find Command for Maximum Speed
-FIND_ARGS=( "$TARGET_DIR" )
-FIND_ARGS+=( "(" )
+msg "Scanning $TARGET_DIR..."
+
+FIND_ARGS=( "$TARGET_DIR" "(" )
 for d in "${PRUNE_DIRS[@]}"; do FIND_ARGS+=( -name "$d" -o ); done
-unset 'FIND_ARGS[${#FIND_ARGS[@]}-1]' # Remove last -o
+unset 'FIND_ARGS[${#FIND_ARGS[@]}-1]' 
 FIND_ARGS+=( ")" -prune -print0 -o "(" )
 for f in "${PRUNE_FILES[@]}"; do FIND_ARGS+=( -name "$f" -o ); done
 unset 'FIND_ARGS[${#FIND_ARGS[@]}-1]'
 FIND_ARGS+=( ")" -print0 )
 
-TOTAL_SIZE=0
-log_info "Scanning file system..."
+TOTAL_KB=0
+COUNT=0
 
-# Process results
+# --- EXECUTION ---
 while IFS= read -r -d '' match; do
-    match_size=$(du -sk "$match" 2>/dev/null | awk '{print $1}' || echo 0)
-    TOTAL_SIZE=$((TOTAL_SIZE + match_size))
-    delete_safely "$match"
+    ((COUNT++))
+    
+    # Live visual feedback in terminal
+    if (( COUNT % 5 == 0 )); then
+        printf "\r${BLUE}[Scanning]${NC} Found %d targets..." "$COUNT"
+    fi
+
+    size=$(du -sk "$match" 2>/dev/null | awk '{print $1}' || echo 0)
+    TOTAL_KB=$((TOTAL_KB + size))
+    
+    # Log everything to the temp file for record-keeping
+    echo "[$((COUNT))] Found ($size KB): $match" >> "$LOG_FILE"
+    
+    if $APPLY; then
+        # Handle Go mod cache and permissions
+        if [[ "$match" == *"/go/pkg/mod/"* ]] && command -v go >/dev/null 2>&1; then
+            go clean -modcache >/dev/null 2>&1 || true
+        fi
+        
+        if rm -rf -- "$match" 2>/dev/null || sudo rm -rf -- "$match"; then
+            echo "   -> DELETED" >> "$LOG_FILE"
+        else
+            echo "   -> FAILED" >> "$LOG_FILE"
+        fi
+    else
+        # In dry-run, we also print found items to the console for visibility
+        printf "\n  ${YELLOW}dry-run:${NC} %s" "$match"
+    fi
 done < <(find "${FIND_ARGS[@]}" 2>/dev/null)
 
-# Final Report
-FINAL_GB=$(echo "scale=2; $TOTAL_SIZE / 1048576" | bc)
-printf "${BLUE}---------------------------------------------${NC}\n"
-log_ok "Cleanup Finished."
-log_info "Total Space Processed: ${GREEN}${FINAL_GB} GB${NC}"
-[[ "$APPLY" == "false" ]] && log_warn "Run with --apply to actually free up space."
+# --- SUMMARY ---
+FINAL_GB=$(echo "scale=2; $TOTAL_KB / 1048576" | bc)
+printf "\r" # Clear the scanning line
+msg "Finished. Scanned $COUNT items."
+msg "Total Size: ${GREEN}${FINAL_GB} GB${NC}"
+msg "Log created: $LOG_FILE"
+
+if ! $APPLY; then
+    warn "No files were deleted. Use --apply to execute."
+else
+    msg "System cleanup complete."
+fi
