@@ -35,9 +35,16 @@ else
 fi
 
 # Install aerospace.toml only on macOS
-# if [[ "$(uname)" == "Darwin" ]]; then
-#     cp -R config/.aerospace.toml ~/.aerospace.toml
-#     aerospace reload-config
-# else
-#     echo "Skipping aerospace configuration: not running on macOS (detected $(uname))."
-# fi
+if [[ "$(uname)" == "Darwin" ]]; then
+    mkdir -p "$HOME/.config/aerospace"
+    # Remove legacy location to avoid ambiguous config error
+    [ -f "$HOME/.aerospace.toml" ] && [ ! -L "$HOME/.aerospace.toml" ] && rm "$HOME/.aerospace.toml"
+    [ -L "$HOME/.aerospace.toml" ] && rm "$HOME/.aerospace.toml"
+    ln -sf "$SCRIPT_DIR/config/.aerospace.toml" "$HOME/.config/aerospace/aerospace.toml"
+    echo "AeroSpace config linked to $HOME/.config/aerospace/aerospace.toml"
+    if command -v aerospace >/dev/null 2>&1; then
+        aerospace reload-config 2>&1 || echo "Start AeroSpace.app first, then run: aerospace reload-config"
+    fi
+else
+    echo "Skipping aerospace configuration: not running on macOS (detected $(uname))."
+fi

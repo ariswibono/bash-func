@@ -1,16 +1,52 @@
+config-version = 2
+
 start-at-login = true
 default-root-container-layout = 'tiles'
 enable-normalization-flatten-containers = false
 enable-normalization-opposite-orientation-for-nested-containers = false
+accordion-padding = 0
+
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
 # Gaps settings
-[gaps]
-inner.horizontal = 15
-inner.vertical   = 15
-outer.left       = 15
-outer.bottom     = 15
-outer.top        = 5
-outer.right      = 15
+gaps.inner.horizontal = 15
+gaps.inner.vertical = 15
+gaps.outer.left = 15
+gaps.outer.bottom = 15
+gaps.outer.top = 5
+gaps.outer.right = 15
+
+on-window-detected = [
+    # Workspace 1 - Personal Chat (tiled, freely resizable)
+    { if = 'test %{app-bundle-id} = net.whatsapp.WhatsApp || test %{app-bundle-id} = com.tinyapp.WhatsApp', run = 'move-node-to-workspace 1' },
+    { if = 'test %{app-bundle-id} = ru.keepcoder.Telegram', run = 'move-node-to-workspace 1' },
+
+    # Workspace 2 - Browser & Obsidian
+    { if = 'test %{app-bundle-id} = com.vivaldi.Vivaldi', run = 'move-node-to-workspace 2' },
+    { if = 'test %{app-bundle-id} = md.obsidian', run = 'move-node-to-workspace 2' },
+
+    # Workspace 3 - VSCode (accordion stack, same size as iTerm2, cycle with cmd+~)
+    { if = 'test %{app-bundle-id} = com.microsoft.VSCode', run = ['move-node-to-workspace 3', 'layout h_accordion'] },
+
+    # Workspace 4 - Terminal (fullscreen)
+    { if = 'test %{app-bundle-id} = com.googlecode.iterm2', run = ['move-node-to-workspace 4', 'fullscreen'] },
+
+    # Workspace 5 - Slack (fullscreen)
+    { if = 'test %{app-bundle-id} = com.tinyspeck.slackmacgap', run = ['move-node-to-workspace 5', 'fullscreen'] },
+
+    # Workspace 6 - Productivity
+    { if = 'test %{app-bundle-id} = com.cron.electron', run = 'move-node-to-workspace 6' },
+    { if = 'test %{app-bundle-id} = notion.id', run = 'move-node-to-workspace 6' },
+    { if = 'test %{app-bundle-id} = notion.mail.id', run = 'move-node-to-workspace 6' },
+
+    # Workspace 7 - Database (floating)
+    { if = 'test %{app-bundle-id} = org.jkiss.dbeaver.core.product', run = ['move-node-to-workspace 7', 'layout floating'] },
+    { if = 'test %{app-bundle-id} = org.pgadmin.pgadmin4', run = ['move-node-to-workspace 7', 'layout floating'] },
+    { if = 'test %{app-bundle-id} = com.elasticvue.app', run = ['move-node-to-workspace 7', 'layout floating'] },
+
+    # Workspace 8 - Music
+    { if = 'test %{app-bundle-id} = com.spotify.client', run = 'move-node-to-workspace 8' },
+]
 
 # Utility key binding
 [mode.main.binding]
@@ -51,70 +87,3 @@ alt-shift-5 = 'move-node-to-workspace 5'
 alt-shift-6 = 'move-node-to-workspace 6'
 alt-shift-7 = 'move-node-to-workspace 7'
 alt-shift-8 = 'move-node-to-workspace 8'
-
-# Personal Chat and Music Apps (Workspace 1 - No Auto Fullscreen)
-[[on-window-detected]]
-if.app-id = 'com.tinyapp.WhatsApp'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'ru.keepcoder.Telegram'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.spotify.client'
-run = ['move-node-to-workspace 1']
-
-# Browser (Workspace 1)
-[[on-window-detected]]
-if.app-id = 'com.vivaldi.Vivaldi'
-run = ['move-node-to-workspace 2']
-
-# Slack (Workspace 5)
-[[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = ['move-node-to-workspace 5', 'fullscreen']
-
-# Work & Dev Tools (Workspace 3, 4, 6)
-[[on-window-detected]]
-if.app-id = 'com.microsoft.VSCode'
-run = ['layout floating', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'com.googlecode.iterm2'
-run = ['move-node-to-workspace 4', 'fullscreen']
-
-[[on-window-detected]]
-if.app-id = 'com.cron.electron'
-run = ['move-node-to-workspace 6']
-
-[[on-window-detected]]
-if.app-id = 'notion.id'
-run = ['move-node-to-workspace 6']
-
-[[on-window-detected]]
-if.app-id = 'notion.mail.id'
-run = ['move-node-to-workspace 6']
-
-# Database & Productivity (Workspace 6)
-[[on-window-detected]]
-if.app-id = 'org.jkiss.dbeaver.core.product'
-run = ['move-node-to-workspace 7', 'layout floating']
-
-[[on-window-detected]]
-if.app-id = 'org.pgadmin.pgadmin4'
-run = ['move-node-to-workspace 7', 'layout floating']
-
-[[on-window-detected]]
-if.app-id = 'com.elasticvue.app'
-run = ['move-node-to-workspace 7', 'layout floating']
-
-# Spotify
-[[on-window-detected]]
-if.app-id = 'com.spotify.client'
-run = 'move-node-to-workspace 1'
-
-# Obsidian
-[[on-window-detected]]
-if.app-id = 'md.obsidian'
-run = ['move-node-to-workspace 2']
