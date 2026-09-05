@@ -1,7 +1,10 @@
 config-version = 2
 
 after-startup-command = [
-    'exec-and-forget borders active_color=0xff38bdf8 inactive_color=0x00000000 width=3.5 hidpi=on',
+    # Backup Sky Blue: 'exec-and-forget borders active_color=0xff38bdf8 inactive_color=0x00000000 width=3.5 hidpi=on',
+    # Backup Coral Red: 'exec-and-forget borders active_color=0xffff5555 inactive_color=0x00000000 width=3.5 hidpi=on',
+    # Backup Light Coral: 'exec-and-forget borders active_color=0xffff7a7a inactive_color=0x00000000 width=3.5 hidpi=on',
+    'exec-and-forget borders active_color=0xff10b981 inactive_color=0x00000000 width=3.5 hidpi=on',
 ]
 
 start-at-login = true
